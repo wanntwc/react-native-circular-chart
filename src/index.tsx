@@ -8,9 +8,11 @@ import {
   StyleSheet,
   TextStyle,
   Easing,
+  Dimensions,
+  Platform,
 } from "react-native";
 
-import { Svg, Path } from "react-native-svg";
+import { Svg, Path, SvgXml } from "react-native-svg";
 import { Square } from "./packages/shape";
 import { Arc, ArcParams, ViewBox } from "./packages/svg";
 import { sum } from "./packages/array";
@@ -24,6 +26,8 @@ export type DonutItem = {
 
 export type DonutAnimationType = "fade" | "slide";
 
+export type DonutAnimationTypeLabel = 'circular' | 'semi-circular';
+
 export type IDonutProps = {
   data: DonutItem[];
   containerWidth: number;
@@ -32,13 +36,17 @@ export type IDonutProps = {
   startAngle?: number;
   endAngle?: number;
   strokeWidth?: number;
-  type?: "butt" | "round";
+  type?: "butt" | "round" | "square";
+  typeLabel?: any;
   labelValueStyle?: StyleProp<TextStyle>;
   labelTitleStyle?: StyleProp<TextStyle>;
   labelWrapperStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
-
   animationType?: DonutAnimationType;
+  unit?: string;
+  styleName?: TextStyle,
+  styleValue?: TextStyle
+  icon?: string
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -53,11 +61,15 @@ export const DonutChart = ({
   strokeWidth = 10,
   type = "round",
   animationType = "slide",
-
+  unit,
+  typeLabel = "circular",
   labelWrapperStyle,
   labelValueStyle,
   labelTitleStyle,
   containerStyle,
+  styleName,
+  styleValue,
+  icon = ''
 }: IDonutProps) => {
   let donutItemListeners: any = [];
   const viewBox = new ViewBox({
@@ -278,10 +290,22 @@ export const DonutChart = ({
   ];
 
   const _getLabelWrapperStyle = (): Animated.WithAnimatedArray<any> => [
-    styles.defaultLabelWrapper,
+    typeLabel === 'circular' ? styles.defaultLabelWrapper : styles.defaultLabelSemiCircular , 
     {
       width: squareInCircle.getCorner() - strokeWidth,
       height: squareInCircle.getCorner() - strokeWidth,
+      opacity: animateOpacity,
+    },
+    labelWrapperStyle,
+  ];
+
+  const _getLabelWrapperIconStyle = (): Animated.WithAnimatedArray<any> => [
+ styles.defaultLabelIcon , 
+    {
+      width:  radius * (Platform.OS ==='android' ? 1.5 : 1.55),
+      height: radius * (Platform.OS ==='android' ? 1.5 : 1.55),
+      borderRadius: 120,
+      backgroundColor: '#F4F8FC',
       opacity: animateOpacity,
     },
     labelWrapperStyle,
@@ -318,14 +342,21 @@ export const DonutChart = ({
             );
           })}
         </Svg>
+        {
+          icon !== '' ? 
+          <Animated.View style={_getLabelWrapperIconStyle()}>
+          <SvgXml xml={icon} />
+          </Animated.View>
+          :
         <Animated.View style={_getLabelWrapperStyle()}>
-          <Text style={_getLabelValueStyle(displayValue?.color)}>
-            {displayValue?.value}
-          </Text>
-          <Text style={_getLabelTitleStyle(displayValue?.color)}>
+          <Text style={[_getLabelTitleStyle(displayValue?.color), {...styleName}]}>
             {displayValue?.name}
           </Text>
+          <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
+            {displayValue?.value} {unit}
+          </Text>
         </Animated.View>
+        }
       </View>
     </Fragment>
   );
@@ -341,6 +372,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  defaultLabelSemiCircular: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: 'flex-start',
+    paddingTop: Dimensions.get('window').width * 0.06
+  },
+
+  defaultLabelIcon: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+
   },
 
   defaultLabelValue: {

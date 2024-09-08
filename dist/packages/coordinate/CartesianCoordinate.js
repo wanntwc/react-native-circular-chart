@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,7 +14,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { Coordinate } from "./Coordinate";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CartesianCoordinate = void 0;
+var Coordinate_1 = require("./Coordinate");
 var CartesianCoordinate = /** @class */ (function (_super) {
     __extends(CartesianCoordinate, _super);
     function CartesianCoordinate() {
@@ -23,6 +26,5 @@ var CartesianCoordinate = /** @class */ (function (_super) {
         return _this;
     }
     return CartesianCoordinate;
-}(Coordinate));
-export { CartesianCoordinate };
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ2FydGVzaWFuQ29vcmRpbmF0ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9wYWNrYWdlcy9jb29yZGluYXRlL0NhcnRlc2lhbkNvb3JkaW5hdGUudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7OztBQUFBLE9BQU8sRUFBRSxVQUFVLEVBQUUsTUFBTSxjQUFjLENBQUM7QUFFMUM7SUFBeUMsdUNBQVU7SUFJakQ7UUFBQSxZQUNFLGlCQUFPLFNBQ1I7UUFMRCxPQUFDLEdBQVcsQ0FBQyxDQUFDO1FBQ2QsT0FBQyxHQUFXLENBQUMsQ0FBQzs7SUFJZCxDQUFDO0lBQ0gsMEJBQUM7QUFBRCxDQUFDLEFBUEQsQ0FBeUMsVUFBVSxHQU9sRCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IENvb3JkaW5hdGUgfSBmcm9tIFwiLi9Db29yZGluYXRlXCI7XG5cbmV4cG9ydCBjbGFzcyBDYXJ0ZXNpYW5Db29yZGluYXRlIGV4dGVuZHMgQ29vcmRpbmF0ZSB7XG4gIHg6IG51bWJlciA9IDA7XG4gIHk6IG51bWJlciA9IDA7XG5cbiAgY29uc3RydWN0b3IoKSB7XG4gICAgc3VwZXIoKTtcbiAgfVxufVxuIl19
+}(Coordinate_1.Coordinate));
+exports.CartesianCoordinate = CartesianCoordinate;

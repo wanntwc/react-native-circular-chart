@@ -2,16 +2,17 @@
   "name": "react-native-circular-chart",
   "version": "1.0.10",
   "description": "circular chart for react-native.",
-  "main": "index.js",
-  "module": "index.js",
-  "react-native": "index.js",
-  "types": "./dist/index.d.ts",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "react-native": "src/index.tsx",
+  "types": "lib/typescript/src/index.d.ts",
   "files": [
     "src",
-    "dist",
+    "lib",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "dist"
   ],
   "@react-native-community/bob": {
     "source": "src",
@@ -23,17 +24,17 @@
     ]
   },
   "scripts": {
-     "test": "echo \"Error: no test specified\" && exit 1",
-  "prepublish": "npm run build",
-  "prepare": "bob build",
-  "prepare:local": "yarn pack",
-  "build": "tsc",
-  "release:patch": "release-it patch",
-  "release": "release-it"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run build",
+    "prepare": "bob build",
+    "prepare:local": "yarn pack",
+    "build": "tsc",
+    "release:patch": "release-it patch",
+    "release": "release-it"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Novsochetra/react-native-circular-chart.git"
+    "url": "git+https://github.com/wanntwc/react-native-circular-chart.git"
   },
   "keywords": [
     "donut-chart",
@@ -51,11 +52,10 @@
   "author": "sochetra NOV <sochetra12.nov@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Novsochetra/react-native-circular-chart/issues"
+    "url": "https://github.com/wanntwc/react-native-circular-chart/issues"
   },
-  "homepage": "https://github.com/Novsochetra/react-native-circular-chart#readme",
+  "homepage": "https://github.com/wanntwc/react-native-circular-chart#readme",
   "devDependencies": {
-    "react-native-builder-bob": "^0.18.0",
     "@release-it/conventional-changelog": "^4.0.0",
     "@types/react": "^18.2.6",
     "@types/react-native": "^0.63.50",
@@ -77,6 +77,7 @@
     "lint-staged": "^10.5.4",
     "metro-react-native-babel-preset": "^0.65.1",
     "prettier": "^2.2.1",
+    "react-native-builder-bob": "^0.18.3",
     "react-native-svg": "^12.1.0",
     "release-it": "^14.12.1",
     "typescript": "^4.1.5"
@@ -93,9 +94,18 @@
       "git add"
     ]
   },
-  "dependencies": {},
   "eslintIgnore": [
     "node_modules/",
-    "dist/"
-  ]
+    "dist/",
+    "lib/"
+  ],
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  }
 }

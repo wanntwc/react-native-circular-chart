@@ -48,6 +48,7 @@ export type IDonutProps = {
   styleValue?: TextStyle
   icon?: string
   switchSvg?: boolean
+  animatedRight?: boolean
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -71,7 +72,8 @@ export const DonutChart = ({
   styleName,
   styleValue,
   icon = '',
-  switchSvg = false
+  switchSvg = false,
+  animatedRight
 }: IDonutProps) => {
   let donutItemListeners: any = [];
   const viewBox = new ViewBox({
@@ -190,6 +192,7 @@ export const DonutChart = ({
         return Animated.timing(animatedPaths[i], {
           toValue: d.to,
           duration: 3000,
+          // easing: Easing.bezier(0.075, 0.82, 0.165, 1),
           easing: Easing.bezier(0.075, 0.82, 0.165, 1),
           useNativeDriver: true,
         });
@@ -222,11 +225,11 @@ export const DonutChart = ({
 
   useEffect(() => {
     data.forEach((_, i) => {
-      const element = pathRefs.current[i];
+      const element = pathRefs.current[animatedRight ? 1 : i];
       donutItemListeners[i] = addListener({
         element,
-        animatedValue: animatedPaths[i],
-        startValue: rotationPaths[i].from,
+        animatedValue: animatedPaths[animatedRight ? 1 : i],
+        startValue: rotationPaths[animatedRight ? 1 : i].from,
       });
     });
   }, []);

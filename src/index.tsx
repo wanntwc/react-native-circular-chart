@@ -49,6 +49,7 @@ export type IDonutProps = {
   icon?: string
   switchSvg?: boolean
   animatedRight?: boolean
+  disableAnimation?: boolean,
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -73,7 +74,8 @@ export const DonutChart = ({
   styleValue,
   icon = '',
   switchSvg = false,
-  animatedRight
+  animatedRight,
+  disableAnimation = true
 }: IDonutProps) => {
   let donutItemListeners: any = [];
   const viewBox = new ViewBox({
@@ -173,6 +175,26 @@ export const DonutChart = ({
   }, [data]);
 
   useEffect(() => {
+    if (disableAnimation === true) {
+      // Không chạy animation, hiển thị ngay trạng thái cuối cùng
+      rotationPaths.forEach((d, i) => {
+        animatedPaths[i].setValue(d.to); // Đặt giá trị trực tiếp mà không cần animate
+      });
+    } else {
+      switch (animationType) {
+        case "slide":
+          animateContainerOpacity.setValue(1);
+          slideAnimation();
+          break;
+
+        default:
+          fadeAnimation();
+          break;
+      }
+    }
+  }, [disableAnimation, data]);
+
+  useEffect(() => {
     switch (animationType) {
       case "slide":
         animateContainerOpacity.setValue(1);
@@ -186,7 +208,7 @@ export const DonutChart = ({
   }, []);
 
   const slideAnimation = () => {
-
+    if (disableAnimation) return;
     if (switchSvg) {
       const animations: Animated.CompositeAnimation[] = rotationPaths.map((d, i) => {
         return Animated.timing(animatedPaths[i], {

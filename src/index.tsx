@@ -207,39 +207,70 @@ export const DonutChart = ({
     }
   }, []);
 
+  let animationInProgress = false;
+
+  const [stepAnimated, setStepAnimated] = useState(1)
+
   const slideAnimation = () => {
-    if (disableAnimation) return;
-    if (switchSvg) {
-      const animations: Animated.CompositeAnimation[] = rotationPaths.map((d, i) => {
-        return Animated.timing(animatedPaths[i], {
-          toValue: d.to,
-          duration: 3000,
-          // easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-          easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-          useNativeDriver: true,
-        });
-      });
+    if (disableAnimation || animationInProgress) return;
+    // if (switchSvg) {
+    //   const animations: Animated.CompositeAnimation[] = rotationPaths.map((d, i) => {
+    //     return Animated.timing(animatedPaths[i], {
+    //       toValue: d.to,
+    //       duration: 3000,
+    //       // easing: Easing.bezier(0.075, 0.82, 0.165, 1),
+    //       easing: Easing.bezier(0.075, 0.82, 0.165, 1),
+    //       useNativeDriver: true,
+    //     });
+    //   });
     
-      Animated.parallel(animations).start();
-    } else {
-        const animations: Animated.CompositeAnimation[] = data.map((_, i) => {
-      const ani = Animated.timing(animatedPaths[i], {
-        toValue: rotationPaths[i].to,
-        duration: 3000,
+    //   Animated.parallel(animations).start();
+    // } else {
+    //     const animations: Animated.CompositeAnimation[] = data.map((_, i) => {
+    //   const ani = Animated.timing(animatedPaths[i], {
+    //     toValue: rotationPaths[i].to,
+    //     duration: 3000,
+    //     easing: Easing.bezier(0.075, 0.82, 0.165, 1),
+    //     useNativeDriver: true,
+    //   });
+
+    //   return ani;
+    // });
+    // Animated.parallel(animations).start();
+    // }
+
+    animationInProgress = true;
+
+    const startAnimation = (index: number) => {
+
+    if (index >= animatedPaths.length || index > stepAnimated) {
+      animationInProgress = false; // Reset when all animations are done
+      return;
+    }
+
+    setTimeout(() => {
+      setStepAnimated(index);
+    }, 25);
+
+
+      Animated.timing(animatedPaths[index], {
+        toValue: rotationPaths[index].to,
+        duration: 2000,
         easing: Easing.bezier(0.075, 0.82, 0.165, 1),
         useNativeDriver: true,
+      }).start(() => {
+        startAnimation(index + 1);
+       
       });
-
-      return ani;
-    });
-    Animated.parallel(animations).start();
-    }
+  };
+    startAnimation(0);
+    setStepAnimated(0)
   };
 
   const fadeAnimation = () => {
     Animated.timing(animateContainerOpacity, {
       toValue: 1,
-      duration: 5000,
+      duration: 2500,
       easing: Easing.bezier(0.075, 0.82, 0.165, 1),
       useNativeDriver: true,
     }).start();
@@ -376,39 +407,45 @@ export const DonutChart = ({
     },
     labelWrapperStyle,
   ];
+
+  const renderSvg = useMemo(() => {
+    return (
+      <Svg width={viewBox.width} height={viewBox.height}>
+        {rotationPaths.map((d, i) => {
+          const arcParams: ArcParams = {
+            coordX: viewBox.getCenterCoord().x,
+            coordY: viewBox.getCenterCoord().y,
+            radius: radius,
+            startAngle: d.from,
+            endAngle: d.to,
+          };
+          const drawPath = new Arc(arcParams).getDrawPath();
+
+          return (
+            <AnimatedPath
+              key={`item-${i}`}
+              ref={(el: any) => (pathRefs.current[i] = el)}
+              onPress={() => onUpdateDisplayValue(data[i], i)}
+              onPressIn={() => onPressIn(data[i], i)}
+              onPressOut={() => onPressOut(i)}
+              strokeLinecap={type}
+              d={drawPath}
+              opacity={animateContainerOpacity}
+              fill="none"
+              stroke={ stepAnimated < i ? 'white' : data[i].color}
+              strokeWidth={animatedStrokeWidths[i]}
+            />
+          );
+        })}
+      </Svg>
+    )
+  }, [rotationPaths, viewBox, stepAnimated, pathRefs.current, animateContainerOpacity, animatedStrokeWidths])
   
 
   return (
     <Fragment>
       <View style={_getContainerStyle()}>
-      <Svg width={viewBox.width} height={viewBox.height}>
-    {rotationPaths.map((d, i) => {
-      const arcParams: ArcParams = {
-        coordX: viewBox.getCenterCoord().x,
-        coordY: viewBox.getCenterCoord().y,
-        radius: radius,
-        startAngle: d.from,
-        endAngle: d.to,
-      };
-      const drawPath = new Arc(arcParams).getDrawPath();
-
-      return (
-        <AnimatedPath
-          key={`item-${i}`}
-          ref={(el: any) => (pathRefs.current[i] = el)}
-          onPress={() => onUpdateDisplayValue(data[i], i)}
-          onPressIn={() => onPressIn(data[i], i)}
-          onPressOut={() => onPressOut(i)}
-          strokeLinecap={type}
-          d={drawPath}
-          opacity={animateContainerOpacity}
-          fill="none"
-          stroke={data[i].color}
-          strokeWidth={animatedStrokeWidths[i]}
-        />
-      );
-    })}
-  </Svg>
+      {renderSvg}
         {
           icon !== '' ? 
           <Animated.View style={_getLabelWrapperIconStyle()}>

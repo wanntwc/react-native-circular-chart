@@ -432,7 +432,7 @@ export const DonutChart = ({
               d={drawPath}
               opacity={animateContainerOpacity}
               fill="none"
-              stroke={ stepAnimated < i ? 'white' : data[i].color}
+              stroke={ stepAnimated < i && !disableAnimation ?  'white' : data[i].color}
               strokeWidth={animatedStrokeWidths[i]}
             />
           );

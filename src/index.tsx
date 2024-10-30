@@ -50,6 +50,7 @@ export type IDonutProps = {
   switchSvg?: boolean
   animatedRight?: boolean
   disableAnimation?: boolean,
+  animatedStep?: number
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -75,7 +76,8 @@ export const DonutChart = ({
   icon = '',
   switchSvg = false,
   animatedRight,
-  disableAnimation = true
+  disableAnimation = true,
+  animatedStep = 1
 }: IDonutProps) => {
   let donutItemListeners: any = [];
   const viewBox = new ViewBox({
@@ -209,7 +211,7 @@ export const DonutChart = ({
 
   let animationInProgress = false;
 
-  const [stepAnimated, setStepAnimated] = useState(1)
+  const [stepAnimated, setStepAnimated] = useState(animatedStep)
 
   const slideAnimation = () => {
     if (disableAnimation || animationInProgress) return;
@@ -432,7 +434,7 @@ export const DonutChart = ({
               d={drawPath}
               opacity={animateContainerOpacity}
               fill="none"
-              stroke={ stepAnimated < i && !disableAnimation ?  'white' : data[i].color}
+              stroke={ stepAnimated < i ? 'white' : data[i].color}
               strokeWidth={animatedStrokeWidths[i]}
             />
           );

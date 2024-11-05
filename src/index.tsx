@@ -50,7 +50,6 @@ export type IDonutProps = {
   switchSvg?: boolean
   animatedRight?: boolean
   disableAnimation?: boolean,
-  animatedStep?: number
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -76,8 +75,7 @@ export const DonutChart = ({
   icon = '',
   switchSvg = false,
   animatedRight,
-  disableAnimation = true,
-  animatedStep = 1
+  disableAnimation = true
 }: IDonutProps) => {
   let donutItemListeners: any = [];
   const viewBox = new ViewBox({
@@ -93,6 +91,9 @@ export const DonutChart = ({
   ).current;
   const pathRefs = useRef<typeof AnimatedPath[]>([]);
   const animatedPaths = useRef<Array<Animated.Value>>([]).current;
+
+
+  
 
   const [displayValue, setDisplayValue] = useState<DonutItem>(switchSvg ? data[1] : data[0]);
 
@@ -128,7 +129,7 @@ export const DonutChart = ({
   
       data.forEach((_, idx) => {
         const fromValues = sum(donutItemValueToPercentage.slice(0, idx));
-        const toValues = sum(donutItemValueToPercentage.slice(0, idx + 1));
+        const toValues = sum(donutItemValueToPercentage.slice(0, idx + 1))
     
         const start = LinearInterpolation({
           value: fromValues,
@@ -144,7 +145,7 @@ export const DonutChart = ({
     
         animatedPaths.unshift(new Animated.Value(start));
       });
-      setRotationPath(rotationRange.slice().reverse());
+      setRotationPath(rotationRange);
     } else {
     data.forEach((_, idx) => {
       const fromValues = sum(donutItemValueToPercentage.slice(0, idx));
@@ -211,35 +212,34 @@ export const DonutChart = ({
 
   let animationInProgress = false;
 
-  const [stepAnimated, setStepAnimated] = useState(animatedStep)
+  const [stepAnimated, setStepAnimated] = useState(1)
 
   const slideAnimation = () => {
     if (disableAnimation || animationInProgress) return;
-    // if (switchSvg) {
-    //   const animations: Animated.CompositeAnimation[] = rotationPaths.map((d, i) => {
-    //     return Animated.timing(animatedPaths[i], {
-    //       toValue: d.to,
-    //       duration: 3000,
-    //       // easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-    //       easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-    //       useNativeDriver: true,
-    //     });
-    //   });
+    if (switchSvg) {
+      const animations: Animated.CompositeAnimation[] = rotationPaths.map((d, i) => {
+        return Animated.timing(animatedPaths[i], {
+          toValue: d.to,
+          duration: 3000,
+          easing: Easing.bezier(0.075, 0.82, 0.165, 1),
+          useNativeDriver: true,
+        });
+      });
     
-    //   Animated.parallel(animations).start();
-    // } else {
-    //     const animations: Animated.CompositeAnimation[] = data.map((_, i) => {
-    //   const ani = Animated.timing(animatedPaths[i], {
-    //     toValue: rotationPaths[i].to,
-    //     duration: 3000,
-    //     easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-    //     useNativeDriver: true,
-    //   });
+      Animated.parallel(animations).start();
+    } else {
+        const animations: Animated.CompositeAnimation[] = data.map((_, i) => {
+      const ani = Animated.timing(animatedPaths[i], {
+        toValue: rotationPaths[i].to,
+        duration: 3000,
+        easing: Easing.bezier(0.075, 0.82, 0.165, 1),
+        useNativeDriver: true,
+      });
 
-    //   return ani;
-    // });
-    // Animated.parallel(animations).start();
-    // }
+      return ani;
+    });
+    Animated.parallel(animations).start();
+    }
 
     animationInProgress = true;
 
@@ -434,7 +434,7 @@ export const DonutChart = ({
               d={drawPath}
               opacity={animateContainerOpacity}
               fill="none"
-              stroke={ stepAnimated < i ? 'white' : data[i].color}
+              stroke={ stepAnimated < i && !disableAnimation ?  'white' : data[i].color}
               strokeWidth={animatedStrokeWidths[i]}
             />
           );

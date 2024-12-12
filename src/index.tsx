@@ -459,7 +459,7 @@ export const DonutChart = ({
             {displayValue?.name}
           </Text>
           <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
-            {displayValue?.value} {unit}
+            {displayValue?.value >= 1 ? displayValue?.value : 0} {unit}
           </Text>
         </Animated.View>
         }

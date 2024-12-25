@@ -50,6 +50,7 @@ export type IDonutProps = {
   switchSvg?: boolean
   animatedRight?: boolean
   disableAnimation?: boolean,
+  valueShow?: any
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -75,7 +76,8 @@ export const DonutChart = ({
   icon = '',
   switchSvg = false,
   animatedRight,
-  disableAnimation = true
+  disableAnimation = true,
+  valueShow
 }: IDonutProps) => {
   let donutItemListeners: any = [];
   const viewBox = new ViewBox({
@@ -91,7 +93,6 @@ export const DonutChart = ({
   ).current;
   const pathRefs = useRef<typeof AnimatedPath[]>([]);
   const animatedPaths = useRef<Array<Animated.Value>>([]).current;
-
 
   
 
@@ -449,14 +450,19 @@ export const DonutChart = ({
   };
 
   const renderUnit = () => {
-    if (unit === 'đ') {
-      return <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
-      {displayValue?.value ? formatNumber(displayValue?.value) : 0} <Text style={{textDecorationLine: 'underline'}}>đ</Text>
+    if (unit === 'đ' ) {
+      return <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
+      {valueShow?.value ? formatNumber(valueShow?.value) : 0} <Text style={{textDecorationLine: 'underline'}}>đ</Text>
     </Text>
       
-    } else {
-      return <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
-      {displayValue?.value >= 1 ? displayValue?.value : 0} {unit}
+    } else if (unit === 'đơn' )  {
+      return <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
+      {valueShow?.value >= 1 ? valueShow?.value : 0} {unit}
+      </Text>
+    }
+    else {
+      return <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
+      {valueShow?.value >= 1 ? valueShow?.value : 0} {unit}
     </Text>
     }
   }
@@ -473,10 +479,10 @@ export const DonutChart = ({
           </Animated.View>
           :
         <Animated.View style={_getLabelWrapperStyle()}>
-          <Text style={[_getLabelTitleStyle(displayValue?.color), {...styleName}]}>
-            {displayValue?.name}
+          <Text style={[_getLabelTitleStyle(valueShow?.color), {...styleName}]}>
+            {valueShow?.name}
           </Text>
-          <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
+          <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
             {renderUnit()}
           </Text>
         </Animated.View>

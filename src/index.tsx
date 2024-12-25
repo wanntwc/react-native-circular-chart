@@ -442,7 +442,25 @@ export const DonutChart = ({
       </Svg>
     )
   }, [rotationPaths, viewBox, stepAnimated, pathRefs.current, animateContainerOpacity, animatedStrokeWidths])
-  
+
+  const formatNumber = (num: number | string) => {
+    const strValue = String(num); // Convert the number to string
+    return num !== 0 ? strValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') : '0';
+  };
+
+  const renderUnit = () => {
+    if (unit === 'đ') {
+      return <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
+      {displayValue?.value ? formatNumber(displayValue?.value) : 0} <Text style={{textDecorationLine: 'underline'}}>đ</Text>
+    </Text>
+      
+    } else {
+      return <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
+      {displayValue?.value >= 1 ? displayValue?.value : 0} {unit}
+    </Text>
+    }
+  }
+   
 
   return (
     <Fragment>
@@ -459,7 +477,7 @@ export const DonutChart = ({
             {displayValue?.name}
           </Text>
           <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
-            {displayValue?.value >= 1 ? displayValue?.value : 0} {unit}
+            {renderUnit()}
           </Text>
         </Animated.View>
         }

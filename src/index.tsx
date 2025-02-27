@@ -94,6 +94,7 @@ export const DonutChart = ({
   const pathRefs = useRef<typeof AnimatedPath[]>([]);
   const animatedPaths = useRef<Array<Animated.Value>>([]).current;
 
+
   
 
   const [displayValue, setDisplayValue] = useState<DonutItem>(switchSvg ? data[1] : data[0]);
@@ -443,30 +444,7 @@ export const DonutChart = ({
       </Svg>
     )
   }, [rotationPaths, viewBox, stepAnimated, pathRefs.current, animateContainerOpacity, animatedStrokeWidths])
-
-  const formatNumber = (num: number | string) => {
-    const strValue = String(num); // Convert the number to string
-    return num !== 0 ? strValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') : '0';
-  };
-
-  const renderUnit = () => {
-    if (unit === 'đ' ) {
-      return <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
-      {valueShow?.value ? formatNumber(valueShow?.value) : 0} <Text style={{textDecorationLine: 'underline'}}>đ</Text>
-    </Text>
-      
-    } else if (unit === 'đơn' )  {
-      return <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
-      {valueShow?.value >= 1 ? valueShow?.value : 0} {unit}
-      </Text>
-    }
-    else {
-      return <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
-      {valueShow?.value >= 1 ? valueShow?.value : 0} {unit}
-    </Text>
-    }
-  }
-   
+  
 
   return (
     <Fragment>
@@ -479,11 +457,11 @@ export const DonutChart = ({
           </Animated.View>
           :
         <Animated.View style={_getLabelWrapperStyle()}>
-          <Text style={[_getLabelTitleStyle(valueShow?.color), {...styleName}]}>
-            {valueShow?.name}
+          <Text style={[_getLabelTitleStyle(displayValue?.color), {...styleName}]}>
+            {displayValue?.name}
           </Text>
-          <Text style={[_getLabelValueStyle(valueShow?.color), {...styleValue}]}>
-            {renderUnit()}
+          <Text style={[_getLabelValueStyle(displayValue?.color), {...styleValue}]}>
+            {valueShow.value} {unit}
           </Text>
         </Animated.View>
         }
